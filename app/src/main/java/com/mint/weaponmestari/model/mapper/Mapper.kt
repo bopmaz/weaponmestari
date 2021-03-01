@@ -16,8 +16,7 @@ fun mapSingleWarriorResponseToEntity(input: WarriorResponse): WarriorEntity =
         input.name,
         WarriorType.from(input.type),
         input.damage,
-        input.armor,
-        input.weaponId)
+        input.armor)
 
 fun mapListWarriorResponseToEntity(input: List<WarriorResponse>): List<WarriorEntity> =
     input.map { mapSingleWarriorResponseToEntity(it) }
@@ -25,7 +24,7 @@ fun mapListWarriorResponseToEntity(input: List<WarriorResponse>): List<WarriorEn
 fun mapSingleWarriorFromEntity(input: WarriorAndWeapon): Warrior =
     Warrior(
         input.warrior.name,
-        listOf(Weapon(WeaponType.from(input.weaponEntity.weaponType))))
+        input.weaponEntity.map { Weapon(WeaponType.from(it.weaponType)) })
 
 fun mapListWarriorFromEntity(input: List<WarriorAndWeapon>): List<Warrior> =
     input.map { mapSingleWarriorFromEntity(it) }

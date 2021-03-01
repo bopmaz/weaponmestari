@@ -2,9 +2,7 @@ package com.mint.weaponmestari.di;
 
 import android.content.Context
 import androidx.room.Room
-import com.mint.weaponmestari.database.WarriorDAO
-import com.mint.weaponmestari.database.WarriorDatabase
-import com.mint.weaponmestari.database.WeaponDAO
+import com.mint.weaponmestari.database.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,8 +21,8 @@ object DatabaseModule {
             .databaseBuilder(
                 context,
                 WarriorDatabase::class.java,
-                "th.db")
-            .fallbackToDestructiveMigration()
+                "weapon.db")
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
@@ -38,5 +36,11 @@ object DatabaseModule {
     @Provides
     fun provideWeaponDAO(warriorDatabase: WarriorDatabase): WeaponDAO {
         return warriorDatabase.weaponDAO()
+    }
+
+    @Singleton
+    @Provides
+    fun provideWarriorAndWeaponsDAO(warriorDatabase: WarriorDatabase): WarriorAndWeaponsDAO {
+        return warriorDatabase.warriorAndWeaponsDAO()
     }
 }

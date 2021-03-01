@@ -39,12 +39,16 @@ class MockInterceptor : Interceptor {
 
 const val WARRIOR_LIST = """
 [
-{"id": 1, "name":"G4Lordi", "type":"assault", "damage":9000, "armor": 1001, "weapon_id": 0},
-{"id": 2, "name":"Juggernault", "type":"assault", "damage":9000, "armor": 1001, "weapon_id": 0},
-{"id": 3, "name":"Axe", "type":"defense", "damage":1000, "armor": 10001, "weapon_id": 0},
-{"id": 4, "name":"Dragon Knight", "type":"defense", "damage":1000, "armor": 10001, "weapon_id": 0}
+{"id": 1, "name":"G4Lordi", "type":"assault", "damage":9000, "armor": 1001, "weapons": [0,1]},
+{"id": 2, "name":"Juggernault", "type":"assault", "damage":9000, "armor": 1001, "weapons": [0]},
+{"id": 3, "name":"Axe", "type":"defense", "damage":1000, "armor": 10001, "weapons": [0]},
+{"id": 4, "name":"DK", "type":"defense", "damage":1000, "armor": 10001, "weapons": [0, 1]},
+{"id": 5, "name":"Rylai", "type":"support", "damage":100, "armor": 100, "weapons": [0, 1]}
 ]
 """
 const val WEAPON_LIST = """
-[{"weapon_id": 0, "weapon_type":"sword", "weapon_damage": 100, "range": 1}]
+[
+{"weapon_id": 0, "weapon_type":"sword", "weapon_damage": 100, "range": 1},
+{"weapon_id": 1, "weapon_type":"spear", "weapon_damage": 20, "range": 5}
+]
 """

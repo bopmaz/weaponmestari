@@ -47,7 +47,9 @@ class WarriorViewHolder(
         binding.textViewWarriorName.text = warrior.name
         warrior.weaponList.forEachIndexed { index, weapon ->
             when (index) {
-                0, 1 -> binding.imageViewWeaponSlot1.setImageDrawable(getWeaponImage(weapon.weaponType))
+                0 -> binding.imageViewWeaponSlot1.setImageDrawable(getWeaponImage(weapon.weaponType))
+                1 -> binding.imageViewWeaponSlot2.setImageDrawable(getWeaponImage(weapon.weaponType))
+                2 -> binding.imageViewWeaponSlot3.setImageDrawable(getWeaponImage(weapon.weaponType))
             }
         }
     }
@@ -55,6 +57,7 @@ class WarriorViewHolder(
     private fun getWeaponImage(weaponType: WeaponType): Drawable? {
         return when (weaponType) {
             WeaponType.SWORD -> ContextCompat.getDrawable(context, R.drawable.ic_sword)
+            WeaponType.SPEAR -> ContextCompat.getDrawable(context, R.drawable.ic_spear)
             WeaponType.UNDEFINED -> ContextCompat.getDrawable(context, R.drawable.ic_question)
         }
     }

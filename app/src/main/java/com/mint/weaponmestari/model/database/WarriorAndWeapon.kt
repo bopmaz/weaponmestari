@@ -1,13 +1,17 @@
 package com.mint.weaponmestari.model.database
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 
 data class WarriorAndWeapon(
-    @Embedded val warrior: WarriorEntity,
+    @Embedded
+    val warrior: WarriorEntity,
+
     @Relation(
-        parentColumn = "weaponId",
-        entityColumn = "weaponId"
+        parentColumn = "warriorId",
+        entityColumn = "weaponId",
+        associateBy = Junction(WarriorWeaponsEntity::class)
     )
-    val weaponEntity: WeaponEntity
+    val weaponEntity: List<WeaponEntity>
 )

@@ -1,5 +1,6 @@
 package com.mint.weaponmestari.di
 
+import com.mint.weaponmestari.database.WarriorAndWeaponsDAO
 import com.mint.weaponmestari.database.WarriorDAO
 import com.mint.weaponmestari.database.WeaponDAO
 import com.mint.weaponmestari.networking.WeaponService
@@ -17,8 +18,10 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideWarriorRepository(warriorDAO: WarriorDAO, weaponService: WeaponService): WarriorRepository {
-        return WarriorRepository(warriorDAO, weaponService)
+    fun provideWarriorRepository(warriorDAO: WarriorDAO,
+                                 warriorAndWeaponsDAO: WarriorAndWeaponsDAO,
+                                 weaponService: WeaponService): WarriorRepository {
+        return WarriorRepository(warriorDAO, warriorAndWeaponsDAO, weaponService)
     }
 
     @Singleton

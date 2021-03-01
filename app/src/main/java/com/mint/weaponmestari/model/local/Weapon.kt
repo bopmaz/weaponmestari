@@ -6,6 +6,7 @@ data class Weapon(
 
 enum class WeaponType(val type: String) {
     SWORD("sword"),
+    SPEAR("spear"),
     UNDEFINED("");
 
     companion object {

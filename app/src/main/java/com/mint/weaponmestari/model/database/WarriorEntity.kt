@@ -9,8 +9,7 @@ data class WarriorEntity(
     val name: String,
     val type: WarriorType,
     val damage: Int,
-    val armor: Int,
-    val weaponId: Int
+    val armor: Int
 )
 
 enum class WarriorType(val type: String) {
