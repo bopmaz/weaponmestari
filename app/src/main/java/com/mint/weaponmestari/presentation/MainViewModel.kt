@@ -1,9 +1,9 @@
 package com.mint.weaponmestari.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mint.weaponmestari.model.local.Warrior
+import com.mint.weaponmestari.model.local.Weapon
 import com.mint.weaponmestari.networking.Resource
 import com.mint.weaponmestari.repository.WarriorRepository
 import com.mint.weaponmestari.repository.WeaponRepository
@@ -36,42 +36,52 @@ class MainViewModel
             mainIntent.consumeAsFlow().collect {
                 when (it) {
                     MainIntent.LoadWeapon -> fetchWeapons()
+                    is MainIntent.ItemClicked -> handleItemClick(it.warrior)
+                    is MainIntent.WeaponSelected -> Unit //TODO: Save weapon for Warrior
                 }
             }
         }
     }
 
-    private fun fetchWarriors() {
-        warriorRepository.fetchWarriors()
-            .onEach {
-                when (it) {
-                    is Resource.Error -> {
-                        Log.d("DCM", it.errorString)
-                        sendStateChange(MainState.Error)
-                    }
-                    is Resource.Loading -> sendStateChange(MainState.Loading)
-                    is Resource.Success -> {
-                        if (it.data != null) {
-                            sendStateChange(MainState.WarriorLoaded(it.data))
-                        } else {
-                            sendStateChange(MainState.Error)
-                        }
-                    }
-                }
-            }.launchIn(viewModelScope)
+    private suspend fun handleItemClick(warrior: Warrior) {
+        val weaponList = weaponRepository.getWeapons()
+        sendStateChange(MainState.InventoryAvailable(weaponList, warrior))
     }
 
-    private fun fetchWeapons() {
-        weaponRepository.fetchWeapons().onEach {
-            when (it) {
-                is Resource.Error -> {
-                    Log.d("DCM", it.errorString)
-                    sendStateChange(MainState.Error)
+    private suspend fun fetchWeapons() {
+        if (weaponRepository.getWeapons().isNullOrEmpty()) {
+            weaponRepository.fetchWeapons().onEach {
+                when (it) {
+                    is Resource.Error -> sendStateChange(MainState.Error)
+                    is Resource.Loading -> sendStateChange(MainState.Loading)
+                    is Resource.Success -> fetchWarriors()
                 }
-                is Resource.Loading -> sendStateChange(MainState.Loading)
-                is Resource.Success -> fetchWarriors()
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        } else {
+            fetchWarriors()
+        }
+    }
+
+    private suspend fun fetchWarriors() {
+        val warriorList = warriorRepository.getAllWarriors()
+        if (warriorList.isNullOrEmpty()) {
+            warriorRepository.fetchWarriors()
+                .onEach {
+                    when (it) {
+                        is Resource.Error -> sendStateChange(MainState.Error)
+                        is Resource.Loading -> sendStateChange(MainState.Loading)
+                        is Resource.Success -> {
+                            if (it.data != null) {
+                                sendStateChange(MainState.WarriorLoaded(it.data))
+                            } else {
+                                sendStateChange(MainState.Error)
+                            }
+                        }
+                    }
+                }.launchIn(viewModelScope)
+        } else {
+            sendStateChange(MainState.WarriorLoaded(warriorList))
+        }
     }
 
     private fun sendStateChange(mainState: MainState) {
@@ -84,8 +94,11 @@ sealed class MainState {
     object Loading : MainState()
     object Error : MainState()
     class WarriorLoaded(val warriorList: List<Warrior>) : MainState()
+    class InventoryAvailable(val weaponList: List<Weapon>, val warrior: Warrior) : MainState()
 }
 
 sealed class MainIntent {
     object LoadWeapon : MainIntent()
+    class ItemClicked(val warrior: Warrior) : MainIntent()
+    class WeaponSelected(val weapon: Weapon, val warrior: Warrior) : MainIntent()
 }

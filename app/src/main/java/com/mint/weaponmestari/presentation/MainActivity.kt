@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mint.weaponmestari.databinding.ActivityMainBinding
 import com.mint.weaponmestari.databinding.ViewLoadingDialogBinding
 import com.mint.weaponmestari.model.local.Warrior
+import com.mint.weaponmestari.model.local.Weapon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
                     MainState.Loading -> loadingDialog.show()
                     MainState.Error -> Unit
                     is MainState.WarriorLoaded -> setupWarriorList(it.warriorList)
+                    is MainState.InventoryAvailable -> openInventory(it.weaponList, it.warrior)
                 }
             }
         }
@@ -52,6 +54,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupWarriorList(warriorList: List<Warrior>) {
         binding.gridViewWarriors.adapter = WarriorAdapter(this, warriorList)
+        binding.gridViewWarriors.setOnItemClickListener { _, _, position, _ ->
+            sendIntent(MainIntent.ItemClicked(warriorList[position]))
+        }
+    }
+
+    private fun openInventory(weaponList: List<Weapon>, warrior: Warrior) {
+        val weaponArray = weaponList.map { it.weaponType.type }.toTypedArray()
+        val weaponSelectionDialog = AlertDialog.Builder(this)
+            .setSingleChoiceItems(weaponArray, 0) { dialog, position ->
+                sendIntent(MainIntent.WeaponSelected(weaponList[position], warrior))
+                dialog.dismiss()
+            }.show()
     }
 
     private fun sendIntent(intent: MainIntent) {
