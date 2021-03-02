@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.mint.weaponmestari.R
 import com.mint.weaponmestari.databinding.ActivityMainBinding
 import com.mint.weaponmestari.databinding.ViewLoadingDialogBinding
 import com.mint.weaponmestari.model.local.Warrior
@@ -61,9 +62,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun openInventory(weaponList: List<Weapon>, warrior: Warrior) {
         val weaponArray = weaponList.map { it.weaponType.type }.toTypedArray()
-        val weaponSelectionDialog = AlertDialog.Builder(this)
-            .setSingleChoiceItems(weaponArray, 0) { dialog, position ->
-                sendIntent(MainIntent.WeaponSelected(weaponList[position], warrior))
+        val checkedOption = weaponList.map { warrior.weaponList.contains(it) }.toBooleanArray()
+        val selectedWeapon = weaponList.filter { warrior.weaponList.contains(it) }.toMutableList()
+        AlertDialog.Builder(this)
+            .setMultiChoiceItems(weaponArray, checkedOption) { dialog, position, isChecked ->
+                if (isChecked) {
+                    selectedWeapon.add(weaponList[position])
+                } else {
+                    selectedWeapon.remove(weaponList[position])
+                }
+            }
+            .setPositiveButton(R.string.done) { dialog, _ ->
+                sendIntent(MainIntent.WeaponSelected(selectedWeapon, warrior))
                 dialog.dismiss()
             }.show()
     }

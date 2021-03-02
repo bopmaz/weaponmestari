@@ -1,6 +1,7 @@
 package com.mint.weaponmestari.model.local
 
 data class Weapon(
+    val id: Int,
     val weaponType: WeaponType
 )
 

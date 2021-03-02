@@ -37,7 +37,7 @@ class MainViewModel
                 when (it) {
                     MainIntent.LoadWeapon -> fetchWeapons()
                     is MainIntent.ItemClicked -> handleItemClick(it.warrior)
-                    is MainIntent.WeaponSelected -> Unit //TODO: Save weapon for Warrior
+                    is MainIntent.WeaponSelected -> handleWeaponSelected(it.weaponList, it.warrior)
                 }
             }
         }
@@ -84,6 +84,11 @@ class MainViewModel
         }
     }
 
+    private suspend fun handleWeaponSelected(weaponList: List<Weapon>, warrior: Warrior) {
+        warriorRepository.updateWeapon(warrior, weaponList)
+        fetchWarriors()
+    }
+
     private fun sendStateChange(mainState: MainState) {
         _state.offer(mainState)
     }
@@ -100,5 +105,5 @@ sealed class MainState {
 sealed class MainIntent {
     object LoadWeapon : MainIntent()
     class ItemClicked(val warrior: Warrior) : MainIntent()
-    class WeaponSelected(val weapon: Weapon, val warrior: Warrior) : MainIntent()
+    class WeaponSelected(val weaponList: List<Weapon>, val warrior: Warrior) : MainIntent()
 }
