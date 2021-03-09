@@ -12,6 +12,8 @@ import com.mint.weaponmestari.databinding.ActivityMainBinding
 import com.mint.weaponmestari.databinding.ViewLoadingDialogBinding
 import com.mint.weaponmestari.model.local.Warrior
 import com.mint.weaponmestari.model.local.Weapon
+import com.mint.weaponmestari.presentation.warrior.OnWarriorSelected
+import com.mint.weaponmestari.presentation.warrior.WarriorListController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -54,10 +56,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupWarriorList(warriorList: List<Warrior>) {
-        binding.gridViewWarriors.adapter = WarriorAdapter(this, warriorList)
-        binding.gridViewWarriors.setOnItemClickListener { _, _, position, _ ->
-            sendIntent(MainIntent.ItemClicked(warriorList[position]))
-        }
+        val warriorController = WarriorListController(this, object : OnWarriorSelected {
+            override fun select(warrior: Warrior) {
+                sendIntent(MainIntent.ItemClicked(warrior))
+            }
+        })
+        binding.recyclerViewWarrior.adapter = warriorController.adapter
+        warriorController.setData(warriorList)
     }
 
     private fun openInventory(weaponList: List<Weapon>, warrior: Warrior) {
