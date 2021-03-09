@@ -28,6 +28,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        dataBinding true
     }
 
     compileOptions {
@@ -37,6 +38,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -76,6 +81,12 @@ dependencies {
     def life_cycle = "2.3.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$life_cycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$life_cycle"
+
+    //Epoxy
+    def epoxy_version = "4.4.2"
+    implementation "com.airbnb.android:epoxy:$epoxy_version"
+    implementation "com.airbnb.android:epoxy-databinding:$epoxy_version"
+    kapt "com.airbnb.android:epoxy-processor:$epoxy_version"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
