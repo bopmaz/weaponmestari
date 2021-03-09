@@ -11,6 +11,10 @@ interface WarriorDAO {
     @Query("SELECT * FROM WarriorEntity")
     suspend fun getWarriorAndWeapon(): List<WarriorAndWeapon>
 
+    @Transaction
+    @Query("SELECT * FROM WarriorEntity WHERE warriorId = :id")
+    suspend fun getWeaponForWarrior(id: Int): WarriorAndWeapon
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveWarriors(warriorList: List<WarriorEntity>)
 }

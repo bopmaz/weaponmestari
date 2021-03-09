@@ -23,5 +23,4 @@ class WeaponRepository(
     }
 
     suspend fun getWeapons(): List<Weapon> = mapListWeaponFromEntity(weaponDAO.getAllWeapons())
-
 }

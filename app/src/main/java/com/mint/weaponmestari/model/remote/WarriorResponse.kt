@@ -13,6 +13,6 @@ data class WarriorResponse(
     val damage: Int,
     @SerializedName("armor")
     val armor: Int,
-    @SerializedName("weapon_id")
-    val weaponId: Int
+    @SerializedName("weapons")
+    val weaponList: List<Int>
 )

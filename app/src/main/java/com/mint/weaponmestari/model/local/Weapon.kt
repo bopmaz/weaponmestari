@@ -1,11 +1,13 @@
 package com.mint.weaponmestari.model.local
 
 data class Weapon(
+    val id: Int,
     val weaponType: WeaponType
 )
 
 enum class WeaponType(val type: String) {
     SWORD("sword"),
+    SPEAR("spear"),
     UNDEFINED("");
 
     companion object {
