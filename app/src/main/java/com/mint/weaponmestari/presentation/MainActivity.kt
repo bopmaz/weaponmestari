@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.mint.weaponmestari.R
 import com.mint.weaponmestari.databinding.ActivityMainBinding
 import com.mint.weaponmestari.databinding.ViewLoadingDialogBinding
@@ -18,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loadingDialog: AlertDialog
 
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var warriorController: WarriorListController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,19 +53,27 @@ class MainActivity : AppCompatActivity() {
                     MainState.Error -> Unit
                     is MainState.WarriorLoaded -> setupWarriorList(it.warriorList)
                     is MainState.InventoryAvailable -> openInventory(it.weaponList, it.warrior)
+                    is MainState.WarriorUpdated -> updateWarrior(it.warriorList, it.warriorIndex)
                 }
             }
         }
     }
 
     private fun setupWarriorList(warriorList: List<Warrior>) {
-        val warriorController = WarriorListController(this, object : OnWarriorSelected {
+        warriorController = WarriorListController(this, object : OnWarriorSelected {
             override fun select(warrior: Warrior) {
                 sendIntent(MainIntent.ItemClicked(warrior))
             }
         })
         binding.recyclerViewWarrior.adapter = warriorController.adapter
+        (binding.recyclerViewWarrior.itemAnimator as SimpleItemAnimator)
+            .supportsChangeAnimations = false
         warriorController.setData(warriorList)
+    }
+
+    private fun updateWarrior(warriorList: List<Warrior>, warriorIndex: Int) {
+        warriorController.setData(warriorList)
+        warriorController.notifyModelChanged(warriorIndex)
     }
 
     private fun openInventory(weaponList: List<Weapon>, warrior: Warrior) {

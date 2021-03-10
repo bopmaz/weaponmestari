@@ -86,7 +86,9 @@ class MainViewModel
 
     private suspend fun handleWeaponSelected(weaponList: List<Weapon>, warrior: Warrior) {
         warriorRepository.updateWeapon(warrior, weaponList)
-        fetchWarriors()
+        val warriorList = warriorRepository.getAllWarriors()
+        val warriorIndex = warriorList.indexOfFirst { it.id == warrior.id }
+        sendStateChange(MainState.WarriorUpdated(warriorList, warriorIndex))
     }
 
     private fun sendStateChange(mainState: MainState) {
@@ -100,6 +102,7 @@ sealed class MainState {
     object Error : MainState()
     class WarriorLoaded(val warriorList: List<Warrior>) : MainState()
     class InventoryAvailable(val weaponList: List<Weapon>, val warrior: Warrior) : MainState()
+    class WarriorUpdated(val warriorList: List<Warrior>, val warriorIndex: Int) : MainState()
 }
 
 sealed class MainIntent {
